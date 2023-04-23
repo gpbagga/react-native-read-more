@@ -1,0 +1,47 @@
+{
+  "name": "@gpbagga/react-native-read-more",
+  "version": "1.0.0",
+  "description": "React Native library to implement Read More and Read Less text for short and full description of your text component. You just need to pass text component and number of lines required to show read more text at the last of target line.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "lint": "eslint .",
+    "start": "react-native start",
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/gpbagga/react-native-read-more.git"
+  },
+  "author": "Gaganpreet Singh Bagga",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gpbagga/react-native-read-more/issues"
+  },
+  "homepage": "https://github.com/gpbagga/react-native-read-more#readme",
+  "dependencies": {
+    "react": "18.2.0",
+    "react-native": "0.71.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@babel/preset-env": "^7.20.0",
+    "@babel/runtime": "^7.20.0",
+    "@react-native-community/eslint-config": "^3.2.0",
+    "@tsconfig/react-native": "^2.0.2",
+    "@types/jest": "^29.2.1",
+    "@types/react": "^18.0.24",
+    "@types/react-test-renderer": "^18.0.0",
+    "babel-jest": "^29.2.1",
+    "eslint": "^8.19.0",
+    "jest": "^29.2.1",
+    "metro-react-native-babel-preset": "0.73.9",
+    "prettier": "^2.4.1",
+    "react-test-renderer": "18.2.0",
+    "typescript": "4.8.4"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
