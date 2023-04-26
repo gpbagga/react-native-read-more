@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
 import ReadMoreMain from "./helpers/ReadMoreMain";
 const App = (props) => {
