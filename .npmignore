@@ -1,0 +1,13 @@
+android/
+ios/
+babel.config.js
+metro.config.js
+_bundle/
+_tests_/
+.eslintrc.js
+.gitignore
+.prettierrc.js
+.watchmanconfig
+Gemfile
+index.js
+tsconfig.json

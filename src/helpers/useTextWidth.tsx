@@ -1,30 +1,29 @@
-import React, {useCallback, useState, useRef} from 'react';
-import {View, Text} from 'react-native';
-const useTextWidth = (textComponent) => {
+import React, { useCallback, useState, useRef } from "react";
+import { View, Text } from "react-native";
+const useTextWidth = (TextComponent) => {
   const [_, rerender] = useState({});
   const prevRef = useRef(null);
   const textWidthRef = useRef(-1);
 
-  const onTextLayout = useCallback(e => {
+  const onTextLayout = useCallback((e) => {
     textWidthRef.current = e.nativeEvent.lines[0].width;
-    // console.log(textWidthRef.current)
     rerender({});
   }, []);
-  if(prevRef.current != textComponent){
+  if (prevRef.current != TextComponent) {
     textWidthRef.current = -1;
-    prevRef.current = textComponent;
+    prevRef.current = TextComponent;
   }
 
   if (textWidthRef.current == -1) {
     return (
       <Text
-      onTextLayout = {onTextLayout}
+        style={{ opacity: 0, position: "absolute", top: 0, left: 0 }}
+        onTextLayout={onTextLayout}
       >
-        {textComponent}
+        <TextComponent />
       </Text>
     );
   }
-
   return Number(textWidthRef.current);
 };
 

@@ -1,3 +1,4 @@
+import React from 'react'
 import { Text } from 'react-native'
 import onStringEncountered from './onStringEncountered'
 
@@ -10,13 +11,13 @@ const getTSX = (numLinesForReadMore,props,lines, accumulator = 0, lineIndex = 0,
       let item = props.children[i]
 
       if (typeof item === 'string' || item instanceof String){
-        
         ({accumulator, lineIndex} = onStringEncountered({lines, accumulator,lineIndex, tempArr, item, styles: {...styles, ...props.style}, numLinesForReadMore, readMoreLineStyles, readTextArr}));
         
       }else{
         // it is text component
         const jsx = getTSX(numLinesForReadMore,item.props, lines, accumulator, lineIndex, {...styles, ...props.style}, readMoreLineStyles)
         tempArr.push(jsx.comp)
+
         accumulator = jsx.accumulator
         lineIndex = jsx.lineIndex
         readTextArr.push(jsx.compBeforeTargetLine)
