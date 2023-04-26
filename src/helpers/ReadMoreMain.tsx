@@ -44,8 +44,11 @@ const ReadMoreMain = ({
 
       lineWidthRef.current = linesRef.current[numLinesForReadMore - 1].width;
       targetLineText.current = linesRef.current[numLinesForReadMore - 1].text;
-
       const leftAreaWidthInEnd = textViewWidth.current - lineWidthRef.current;
+      if (readMoreWidth - leftAreaWidthInEnd <= 0) {
+        setCutIndex(targetLineText.current.trimEnd().length - 1);
+        return;
+      }
       setReadMoreWidthLeft(readMoreWidth - leftAreaWidthInEnd);
     }
   };
@@ -65,7 +68,8 @@ const ReadMoreMain = ({
 
   const onViewLayout = (e) => {
     // to get e._dispatchInstances
-    orgTextComp.current = e._dispatchInstances?.child?.child;
+    let temp = e._dispatchInstances?.child ?? e._dispatchInstances?.alternate;
+    orgTextComp.current = temp?.child ?? temp?.alternate;
     mainStyleRef.current = orgTextComp.current?.memoizedProps?.style ?? {};
     onReceivedAllNeeds();
   };
