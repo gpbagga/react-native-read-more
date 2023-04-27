@@ -1,5 +1,5 @@
-import React, { useCallback, useRef, useState } from "react";
-import { View, Text } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { View, Text, Platform } from "react-native";
 import useTextWidth from "./useTextWidth";
 import getTSX from "./getTSX";
 
@@ -8,6 +8,7 @@ const ReadMoreMain = ({
   numLinesForReadMore,
   ReadMoreComponent,
   ReadLessComponent,
+  height
 }) => {
   const textViewWidth = useRef();
   const [i, setI] = useState(-1); // i for iteration of target line words
@@ -26,7 +27,6 @@ const ReadMoreMain = ({
   const readMoreWidth = useTextWidth(ReadMoreComponent);
 
   const onReceivedAllNeeds = () => {
-    if (fullTextComponent.current) return;
 
     if (textViewWidth.current && orgTextComp.current && linesRef.current) {
       if (linesRef.current.length <= numLinesForReadMore) {
@@ -68,8 +68,16 @@ const ReadMoreMain = ({
 
   const onViewLayout = (e) => {
     // to get e._dispatchInstances
+    textViewWidth.current = e.nativeEvent.layout.width;
+     
     let temp = e._dispatchInstances?.child ?? e._dispatchInstances?.alternate;
-    orgTextComp.current = temp?.child ?? temp?.alternate;
+    
+      temp = temp?.child ?? temp?.alternate
+      if(temp?.child ?? temp?.alternate)
+        orgTextComp.current = temp?.child ?? temp?.alternate
+      else
+        orgTextComp.current = temp
+    
     mainStyleRef.current = orgTextComp.current?.memoizedProps?.style ?? {};
     onReceivedAllNeeds();
   };
@@ -92,16 +100,21 @@ const ReadMoreMain = ({
   }, [i]);
   const width = useTextWidth(TempComponent);
 
+  if(!height){
+    return null
+  }
+
   if (isNaN(readMoreWidth)) return readMoreWidth; // to calculate read more text width
 
   if (!targetLineText.current || !isReadMoreLessShow || cutIndex > -1) {
     if (!targetLineText.current || !isReadMoreLessShow) {
       return (
-        <View style={{ opacity: 0 }} onLayout={onViewLayout}>
+        <View style={{ 
+          flexDirection:'row',flex: 1, flexWrap: 'wrap',
+          opacity: isReadMoreLessShow ? 0: 1, height:height}} onLayout={onViewLayout}>
           <TextComponent
-            numberOfLines={isReadMoreLessShow ? numLinesForReadMore : undefined}
             onTextLayout={onTextLayout}
-            onLayout={onLayout}
+            // onLayout={onLayout}
           />
         </View>
       );
