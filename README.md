@@ -42,5 +42,5 @@ const App = () => {
 export default App
 ```
 
-> Make sure that style of Parent View of ReadMore component does NOT include flexDirection:'row' and flexWrap:'wrap'.
-> Keep TextComponent in useCallback to not render the ReadMore component again when text inside it remains same.
+* Make sure that style of Parent View of ReadMore component does NOT include flexDirection:'row' and flexWrap:'wrap'.
+* Keep TextComponent in useCallback to not render the ReadMore component again when text inside it remains same.
