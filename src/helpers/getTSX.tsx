@@ -1,52 +1,88 @@
-import React from 'react'
-import { Text } from 'react-native'
-import onStringEncountered from './onStringEncountered'
+import React from "react";
+import { Text } from "react-native";
+import onStringEncountered from "./onStringEncountered";
 
 // accumulator means how much length of full text component has we covered so far
-const getTSX = (numLinesForReadMore,props,lines, accumulator = 0, lineIndex = 0, styles = {}, readMoreLineStyles = [])=> {
-  const tempArr = []
-  const readTextArr = []
-  if(Array.isArray(props.children)){
-    for(let i = 0; i< props.children.length; i++){
-      let item = props.children[i]
+const getTSX = (
+  numLinesForReadMore,
+  props,
+  lines,
+  accumulator = 0,
+  styles = {},
+  readMoreLineStyles = []
+) => {
+  const tempArr = [];
+  const arrB4TargetLine = [];
+  const stylesTemp =
+    !Array.isArray(props.style) && !Array.isArray(styles)
+      ? { ...styles, ...props.style }
+      : [
+          ...(Array.isArray(styles) ? styles : [styles]),
+          ...(Array.isArray(props.style) ? props.style : [props.style]),
+        ];
 
-      if (typeof item === 'string' || item instanceof String){
-        ({accumulator, lineIndex} = onStringEncountered({lines, accumulator,lineIndex, tempArr, item, styles: {...styles, ...props.style}, numLinesForReadMore, readMoreLineStyles, readTextArr}));
-        
-      }else{
+  if (Array.isArray(props.children)) {
+    for (let i = 0; i < props.children.length; i++) {
+      let item = props.children[i];
+
+      if (typeof item === "string" || item instanceof String) {
+        ({ accumulator } = onStringEncountered({
+          lines,
+          accumulator,
+          tempArr,
+          item,
+          styles: stylesTemp,
+          numLinesForReadMore,
+          readMoreLineStyles,
+          arrB4TargetLine,
+        }));
+      } else {
         // it is text component
-        const jsx = getTSX(numLinesForReadMore,item.props, lines, accumulator, lineIndex, {...styles, ...props.style}, readMoreLineStyles)
-        tempArr.push(jsx.comp)
-
-        accumulator = jsx.accumulator
-        lineIndex = jsx.lineIndex
-        readTextArr.push(jsx.compBeforeTargetLine)
+        const jsx = getTSX(
+          numLinesForReadMore,
+          item.props,
+          lines,
+          accumulator,
+          stylesTemp,
+          readMoreLineStyles
+        );
+        tempArr.push(jsx.comp);
+        accumulator = jsx.accumulator;
+        arrB4TargetLine.push(jsx.compBeforeTargetLine);
       }
     }
-  }else{
+  } else {
     // it is a string
     let item = props.children;
-    ({accumulator, lineIndex} = onStringEncountered({lines, accumulator,lineIndex, tempArr, item, styles: {...styles, ...props.style}, numLinesForReadMore, readMoreLineStyles, readTextArr}));
+    ({ accumulator } = onStringEncountered({
+      lines,
+      accumulator,
+      tempArr,
+      item,
+      styles: stylesTemp,
+      numLinesForReadMore,
+      readMoreLineStyles,
+      arrB4TargetLine,
+    }));
   }
-  return ({
+  return {
     comp: (
       <Text style={props.style}>
-        {tempArr.map(item => {
+        {tempArr.map((item) => {
           return item;
         })}
       </Text>
     ),
-    compBeforeTargetLine:(
+    compBeforeTargetLine: (
       <Text style={props.style}>
-        {readTextArr.map(item => {
+        {arrB4TargetLine.map((item) => {
           return item;
         })}
       </Text>
     ),
     accumulator,
-    lineIndex,
     readMoreLineStyles,
-  });
-}
+  };
+};
 
-export default getTSX
+export default getTSX;

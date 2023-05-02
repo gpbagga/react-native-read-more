@@ -6,7 +6,7 @@ const useTextWidth = (TextComponent) => {
   const textWidthRef = useRef(-1);
 
   const onTextLayout = useCallback((e) => {
-    textWidthRef.current = e.nativeEvent.lines[0].width;
+    textWidthRef.current = e.nativeEvent.layout.width;
     rerender({});
   }, []);
   if (prevRef.current != TextComponent) {
@@ -16,12 +16,12 @@ const useTextWidth = (TextComponent) => {
 
   if (textWidthRef.current == -1) {
     return (
-      <Text
-        style={{ opacity: 0, position: "absolute", top: 0, left: 0 }}
-        onTextLayout={onTextLayout}
+      <View
+        style={{ opacity: 0, position: "absolute", top: 0, left: 0, alignItems: 'flex-start' }}
+        onLayout={onTextLayout}
       >
         <TextComponent />
-      </Text>
+      </View>
     );
   }
   return Number(textWidthRef.current);

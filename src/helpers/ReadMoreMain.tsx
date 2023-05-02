@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { View, Text, Platform } from "react-native";
-import useTextWidth from "./useTextWidth";
-import getTSX from "./getTSX";
-import { useMemo } from "react/cjs/react.production.min";
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {View, Text, Platform} from 'react-native';
+import useTextWidth from './useTextWidth';
+import getTSX from './getTSX';
+import {useMemo} from 'react';
 
 const ReadMoreMain = ({
   orgTextComp,
@@ -13,48 +13,44 @@ const ReadMoreMain = ({
   ReadMoreComponent,
   ReadLessComponent,
 }) => {
+  
   const [i, setI] = useState(-1); // i for iteration of target line words
   const [readMoreWidthLeft, setReadMoreWidthLeft] = useState(-1); // readMore Width which is left after subtracting blank space in target line
-  const targetLineText = lines[numLinesForReadMore - 1].text // read more's line text
+  const targetLineText = lines[numLinesForReadMore - 1].text; // read more's line text
   const [cutIndex, setCutIndex] = useState(-1); // index where we want to cut the target line from and attach read more text
   const targetLineWidth = lines[numLinesForReadMore - 1].width; // initial target line width
   const compBeforeTargetLine = useRef(); // component formed before target line
   const [isReadMore, setIsReadMore] = useState(true); // boolean to show if lines are cut to show readmore text
   const fullTextComponent = useRef(); // full text component made by the layout coming from onTextLayout
   const readMoreLineStylesRef = useRef([]); // styles of each character of target line
-  const ReadMoreCompMemoized = useMemo(()=> ReadMoreComponent, [])
+  const ReadMoreCompMemoized = useMemo(() => ReadMoreComponent, []);
   const readMoreWidth = useTextWidth(ReadMoreCompMemoized);
 
   const onReceivedAllNeeds = () => {
-
     if (textViewWidth && orgTextComp && lines) {
-      let obj = getTSX(
-        numLinesForReadMore,
-        orgTextComp.memoizedProps,
-        lines
-      );
+      let obj = getTSX(numLinesForReadMore, orgTextComp.memoizedProps, lines);
+      // console.log('obj', obj)
       fullTextComponent.current = obj.comp;
       readMoreLineStylesRef.current = obj.readMoreLineStyles;
       compBeforeTargetLine.current = obj.compBeforeTargetLine;
-
       const leftAreaWidthInEnd = textViewWidth - targetLineWidth;
       if (readMoreWidth - leftAreaWidthInEnd <= 0) {
         setCutIndex(targetLineText.length - 1);
+        setReadMoreWidthLeft('_')
         return;
       }
       setReadMoreWidthLeft(readMoreWidth - leftAreaWidthInEnd);
     }
   };
 
-
   const onReadMoreLessPress = () => {
-    setIsReadMore((old) => !old);
+    setIsReadMore(old => !old);
   };
   const TempComponent = useCallback(() => {
     return (
       <Text>
         {i === -1
-          ? ""
+          ? ''
           : readMoreLineStylesRef.current
               .slice(i)
               .map((style, index) => (
@@ -65,19 +61,20 @@ const ReadMoreMain = ({
   }, [i]);
   const width = useTextWidth(TempComponent);
 
-  if(!orgTextComp || !lines || !textViewWidth || !mainStyle){
-    return null
+  if (!orgTextComp || !lines || !textViewWidth || !mainStyle) {
+    return null;
   }
 
   if (isNaN(readMoreWidth)) return readMoreWidth; // to calculate read more text width
-  if(cutIndex === -1){
-
+  if (cutIndex === -1 && readMoreWidthLeft === -1) {
+    onReceivedAllNeeds()
+    return null
   }
 
-  if(cutIndex > -1){
-    return(
+  if (cutIndex > -1) {
+    return (
       <Text
-          style={{ ...mainStyle }} // for margin and related styles because margin doesn't work in nested text components
+      style = {{position: 'relative'}}
       >
         {isReadMore ? compBeforeTargetLine.current : fullTextComponent.current}
 
@@ -85,9 +82,9 @@ const ReadMoreMain = ({
           ? readMoreLineStylesRef.current
               .slice(0, cutIndex + 1)
               .map((style, index) => {
-                return (
-                  <Text style={style}>{targetLineText[index]}</Text>
-                );
+                if(targetLineText[index] === '\n')
+                  return
+                return <Text style={style}>{targetLineText[index]}</Text>;
               })
           : null}
 
@@ -95,7 +92,7 @@ const ReadMoreMain = ({
           {isReadMore ? <ReadMoreComponent /> : <ReadLessComponent />}
         </Text>
       </Text>
-    )
+    );
   }
 
   if (isNaN(width)) {
@@ -106,8 +103,8 @@ const ReadMoreMain = ({
   if (widthLeft <= 0) {
     setCutIndex(widthLeft < 0 ? i - 1 : i);
   } else {
-    setI((old) => {
-      if (old == -1) return targetLineText.current.length - 1;
+    setI(old => {
+      if (old == -1) return targetLineText.length - 1;
       return old - 1;
     });
   }
