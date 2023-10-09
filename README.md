@@ -1,10 +1,7 @@
 # react-native-read-more
 
 ```
-import ReadMore from '@gpbagga/react-native-read-more'
-
-const SAMPLESTR =
-  "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system"
+import ReactNativeReadMore from '@gpbagga/react-native-read-more'
 
 const App = () => {
   const TextComponent = useCallback(() => (
@@ -27,11 +24,11 @@ const App = () => {
   ), [])
 
   return (
-    <ReadMore
+    <ReactNativeReadMore
       TextComponent={TextComponent}
       numLinesForReadMore={3}
-      ReadMoreComponent={() => <Text>...read more</Text>}
-      ReadLessComponent={() => <Text>...read less</Text>}
+      ReadMoreComponent={<Text>...read more</Text>}
+      ReadLessComponent={<Text>...read less</Text>}
     />
   )
 }
@@ -39,5 +36,5 @@ const App = () => {
 export default App
 ```
 
-* Make sure that style of Parent View of ReadMore component does NOT include flexDirection:'row' and flexWrap:'wrap'.
-* Keep TextComponent inside useCallback to not render the ReadMore component again when text inside it remains same.
+* Make sure that style of Parent View of ReactNativeReadMore component does NOT include flexDirection:'row' and flexWrap:'wrap'.
+* Keep TextComponent inside useCallback to not render the ReactNativeReadMore component again on rerender of the App when text inside it remains same.
