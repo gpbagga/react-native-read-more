@@ -14,16 +14,16 @@ const getTSX = (
   const tempArr = [];
   const arrB4TargetLine = [];
   const stylesTemp =
-    !Array.isArray(props.style) && !Array.isArray(styles)
-      ? { ...styles, ...props.style }
+    !Array.isArray(props?.style) && !Array.isArray(styles)
+      ? { ...styles, ...props?.style }
       : [
           ...(Array.isArray(styles) ? styles : [styles]),
-          ...(Array.isArray(props.style) ? props.style : [props.style]),
+          ...(Array.isArray(props?.style) ? props?.style : [props?.style]),
         ];
 
-  if (Array.isArray(props.children)) {
-    for (let i = 0; i < props.children.length; i++) {
-      let item = props.children[i];
+  if (Array.isArray(props?.children)) {
+    for (let i = 0; i < props?.children.length; i++) {
+      let item = props?.children[i];
 
       if (typeof item === "string" || item instanceof String) {
         ({ accumulator } = onStringEncountered({
@@ -53,7 +53,7 @@ const getTSX = (
     }
   } else {
     // it is a string
-    let item = props.children;
+    let item = props?.children;
     ({ accumulator } = onStringEncountered({
       lines,
       accumulator,
@@ -67,16 +67,16 @@ const getTSX = (
   }
   return {
     comp: (
-      <Text style={props.style}>
-        {tempArr.map((item) => {
-          return item;
+      <Text style={props?.style}>
+        {tempArr.map((item, index) => {
+          return <Text key={index}>{item}</Text>;
         })}
       </Text>
     ),
     compBeforeTargetLine: (
-      <Text style={props.style}>
-        {arrB4TargetLine.map((item) => {
-          return item;
+      <Text style={props?.style}>
+        {arrB4TargetLine.map((item, index) => {
+          return <Text key={index}>{item}</Text>;
         })}
       </Text>
     ),

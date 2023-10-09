@@ -1,8 +1,8 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {View, Text, Platform} from 'react-native';
-import useTextWidth from './useTextWidth';
-import getTSX from './getTSX';
-import {useMemo} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { View, Text, Platform } from "react-native";
+import useTextWidth from "./useTextWidth";
+import getTSX from "./getTSX";
+import { useMemo } from "react";
 
 const ReadMoreMain = ({
   orgTextComp,
@@ -13,7 +13,6 @@ const ReadMoreMain = ({
   ReadMoreComponent,
   ReadLessComponent,
 }) => {
-  
   const [i, setI] = useState(-1); // i for iteration of target line words
   const [readMoreWidthLeft, setReadMoreWidthLeft] = useState(-1); // readMore Width which is left after subtracting blank space in target line
   const targetLineText = lines[numLinesForReadMore - 1].text; // read more's line text
@@ -23,7 +22,7 @@ const ReadMoreMain = ({
   const [isReadMore, setIsReadMore] = useState(true); // boolean to show if lines are cut to show readmore text
   const fullTextComponent = useRef(); // full text component made by the layout coming from onTextLayout
   const readMoreLineStylesRef = useRef([]); // styles of each character of target line
-  const ReadMoreCompMemoized = useMemo(() => ReadMoreComponent, []);
+  const ReadMoreCompMemoized = useMemo(() => () => ReadMoreComponent, []);
   const readMoreWidth = useTextWidth(ReadMoreCompMemoized);
 
   const onReceivedAllNeeds = () => {
@@ -36,7 +35,7 @@ const ReadMoreMain = ({
       const leftAreaWidthInEnd = textViewWidth - targetLineWidth;
       if (readMoreWidth - leftAreaWidthInEnd <= 0) {
         setCutIndex(targetLineText.length - 1);
-        setReadMoreWidthLeft('_')
+        setReadMoreWidthLeft("_");
         return;
       }
       setReadMoreWidthLeft(readMoreWidth - leftAreaWidthInEnd);
@@ -44,18 +43,18 @@ const ReadMoreMain = ({
   };
 
   const onReadMoreLessPress = () => {
-    setIsReadMore(old => !old);
+    setIsReadMore((old) => !old);
   };
   const TempComponent = useCallback(() => {
     return (
       <Text>
         {i === -1
-          ? ''
-          : readMoreLineStylesRef.current
-              .slice(i)
-              .map((style, index) => (
-                <Text style={style}>{targetLineText[i + index]}</Text>
-              ))}
+          ? ""
+          : readMoreLineStylesRef.current.slice(i).map((style, index) => (
+              <Text key={index} style={style}>
+                {targetLineText[i + index]}
+              </Text>
+            ))}
       </Text>
     );
   }, [i]);
@@ -67,29 +66,30 @@ const ReadMoreMain = ({
 
   if (isNaN(readMoreWidth)) return readMoreWidth; // to calculate read more text width
   if (cutIndex === -1 && readMoreWidthLeft === -1) {
-    onReceivedAllNeeds()
-    return null
+    onReceivedAllNeeds();
+    return null;
   }
 
   if (cutIndex > -1) {
     return (
-      <Text
-      style = {{position: 'relative'}}
-      >
+      <Text style={{ position: "relative" }}>
         {isReadMore ? compBeforeTargetLine.current : fullTextComponent.current}
 
         {isReadMore && cutIndex > -1
           ? readMoreLineStylesRef.current
               .slice(0, cutIndex + 1)
               .map((style, index) => {
-                if(targetLineText[index] === '\n')
-                  return
-                return <Text style={style}>{targetLineText[index]}</Text>;
+                if (targetLineText[index] === "\n") return;
+                return (
+                  <Text key={index} style={style}>
+                    {targetLineText[index]}
+                  </Text>
+                );
               })
           : null}
 
         <Text onPress={onReadMoreLessPress}>
-          {isReadMore ? <ReadMoreComponent /> : <ReadLessComponent />}
+          {isReadMore ? ReadMoreComponent : ReadLessComponent}
         </Text>
       </Text>
     );
@@ -103,7 +103,7 @@ const ReadMoreMain = ({
   if (widthLeft <= 0) {
     setCutIndex(widthLeft < 0 ? i - 1 : i);
   } else {
-    setI(old => {
+    setI((old) => {
       if (old == -1) return targetLineText.length - 1;
       return old - 1;
     });
