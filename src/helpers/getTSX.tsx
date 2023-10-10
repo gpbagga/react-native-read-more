@@ -40,15 +40,15 @@ const getTSX = (
         // it is text component
         const jsx = getTSX(
           numLinesForReadMore,
-          item.props,
+          item?.props,
           lines,
           accumulator,
           stylesTemp,
           readMoreLineStyles
         );
-        tempArr.push(jsx.comp);
-        accumulator = jsx.accumulator;
-        arrB4TargetLine.push(jsx.compBeforeTargetLine);
+        tempArr.push(jsx?.comp);
+        accumulator = jsx?.accumulator;
+        arrB4TargetLine.push(jsx?.compBeforeTargetLine);
       }
     }
   } else {
