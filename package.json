@@ -1,7 +1,7 @@
 {
   "name": "@gpbagga/react-native-read-more",
-  "version": "1.1.1",
-  "description": "React Native library to implement Read More and Read Less text for short and full description of your text component. You just need to pass text component and number of lines required to show read more text at the last of target line.",
+  "version": "1.2.0",
+  "description": "React Native library which truncates text after a specified number of lines, adding a 'Read More' link. Clicking it expands the text with animation, revealing the full content and a 'Read Less' link to collapse back. Enhance readability effortlessly.",
   "main": "src/App.tsx",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

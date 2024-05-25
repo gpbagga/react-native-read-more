@@ -1,8 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { View, Text, Platform } from "react-native";
-import useTextWidth from "./useTextWidth";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Animated, Text } from "react-native";
 import getTSX from "./getTSX";
-import { useMemo } from "react";
+import useTextWidth from "./useTextWidth";
 
 const ReadMoreMain = ({
   orgTextComp,
@@ -12,6 +11,11 @@ const ReadMoreMain = ({
   mainStyle,
   ReadMoreComponent,
   ReadLessComponent,
+  setIsFinalTextReady,
+  shortHeight,
+  fullHeight,
+  isAnimated = true,
+  animationDuration = 500
 }) => {
   const [i, setI] = useState(-1); // i for iteration of target line words
   const [readMoreWidthLeft, setReadMoreWidthLeft] = useState(-1); // readMore Width which is left after subtracting blank space in target line
@@ -22,8 +26,12 @@ const ReadMoreMain = ({
   const [isReadMore, setIsReadMore] = useState(true); // boolean to show if lines are cut to show readmore text
   const fullTextComponent = useRef(); // full text component made by the layout coming from onTextLayout
   const readMoreLineStylesRef = useRef([]); // styles of each character of target line
-  const ReadMoreCompMemoized = useMemo(() => () => ReadMoreComponent, []);
-  const readMoreWidth = useTextWidth(ReadMoreCompMemoized);
+  const ReadMoreCompMemoized = useMemo(() => ReadMoreComponent, []);
+  const readMoreWidth = useTextWidth(ReadMoreCompMemoized, true);
+
+  const heightAnimated = useRef(
+    new Animated.Value(shortHeight.current)
+  ).current;
 
   const onReceivedAllNeeds = () => {
     if (textViewWidth && orgTextComp && lines) {
@@ -43,9 +51,25 @@ const ReadMoreMain = ({
   };
 
   const onReadMoreLessPress = () => {
-    setIsReadMore((old) => !old);
+    if (isAnimated) {
+      const anim = Animated.timing(heightAnimated, {
+        toValue: isReadMore ? fullHeight.current + 50 : shortHeight.current, // 50 is added because read less can get wrapped to next line but fullHeight does not include read less text
+        duration: animationDuration,
+        useNativeDriver: false,
+      });
+      if (isReadMore) {
+        setIsReadMore(false);
+        anim.start();
+      } else {
+        anim.start(() => {
+          setIsReadMore(true);
+        });
+      }
+    } else {
+      setIsReadMore((old) => !old);
+    }
   };
-  const TempComponent = useCallback(() => {
+  const TempComponent = useMemo(() => {
     return (
       <Text>
         {i === -1
@@ -58,6 +82,13 @@ const ReadMoreMain = ({
       </Text>
     );
   }, [i]);
+
+  useEffect(() => {
+    if (cutIndex > -1) {
+      setIsFinalTextReady(true);
+    }
+  }, [cutIndex]);
+
   const width = useTextWidth(TempComponent);
 
   if (!orgTextComp || !lines || !textViewWidth || !mainStyle) {
@@ -72,7 +103,12 @@ const ReadMoreMain = ({
 
   if (cutIndex > -1) {
     return (
-      <Text style={{ position: "relative" }}>
+      <Animated.Text
+        style={{
+          position: "relative",
+          ...(isAnimated ? { maxHeight: heightAnimated } : {}),
+        }}
+      >
         {isReadMore ? compBeforeTargetLine.current : fullTextComponent.current}
 
         {isReadMore && cutIndex > -1
@@ -88,10 +124,10 @@ const ReadMoreMain = ({
               })
           : null}
 
-        <Text onPress={onReadMoreLessPress}>
+        <Text suppressHighlighting onPress={onReadMoreLessPress}>
           {isReadMore ? ReadMoreComponent : ReadLessComponent}
         </Text>
-      </Text>
+      </Animated.Text>
     );
   }
 

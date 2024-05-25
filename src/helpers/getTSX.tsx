@@ -54,16 +54,18 @@ const getTSX = (
   } else {
     // it is a string
     let item = props?.children;
-    ({ accumulator } = onStringEncountered({
-      lines,
-      accumulator,
-      tempArr,
-      item,
-      styles: stylesTemp,
-      numLinesForReadMore,
-      readMoreLineStyles,
-      arrB4TargetLine,
-    }));
+    if (typeof item === "string" || item instanceof String) {
+      ({ accumulator } = onStringEncountered({
+        lines,
+        accumulator,
+        tempArr,
+        item,
+        styles: stylesTemp,
+        numLinesForReadMore,
+        readMoreLineStyles,
+        arrB4TargetLine,
+      }));
+    }
   }
   return {
     comp: (

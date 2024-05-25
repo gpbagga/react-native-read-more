@@ -1,34 +1,34 @@
 # react-native-read-more
 
 ```
-import ReactNativeReadMore from '@gpbagga/react-native-read-more'
+import ReadMore from '@gpbagga/react-native-read-more'
 
 const App = () => {
-  const TextComponent = useCallback(() => (
-    <Text
-    style={{
-      margin: 30,
-      fontSize: 16,
-      fontFamily: 'sans-serif-condensed'
-    }}>
-      <Text
-      style={{
-        fontWeight: 'bold'
-      }}
-      >{SAMPLESTR.substring(0, 30)}</Text>
-      {SAMPLESTR.substring(30, 100)}
-      <Text
-        style={{ fontSize: 20, fontWeight: 'bold' }} >{SAMPLESTR.substring(100, 110)}</Text>
-      <Text style={{ fontSize: 30 }} >{SAMPLESTR.substring(110)}</Text>
-    </Text>
-  ), [])
-
   return (
-    <ReactNativeReadMore
-      TextComponent={TextComponent}
+    <ReadMore
+      TextComponent={
+        <Text
+        style={{
+          margin: 30,
+          fontSize: 16,
+          fontFamily: 'sans-serif-condensed'
+        }}>
+          <Text
+          style={{
+            fontWeight: 'bold'
+          }}
+          >{SAMPLE_STRING.substring(0, 30)}</Text>
+          {SAMPLE_STRING.substring(30, 100)}
+          <Text
+            style={{ fontSize: 20, fontWeight: 'bold' }} >{SAMPLE_STRING.substring(100, 110)}</Text>
+          <Text style={{ fontSize: 30 }} >{SAMPLE_STRING.substring(110)}</Text>
+        </Text>
+      }
       numLinesForReadMore={3}
       ReadMoreComponent={<Text>...read more</Text>}
       ReadLessComponent={<Text>...read less</Text>}
+      isAnimated={true}
+      animationDuration={1000}  // by default, it is 500
     />
   )
 }
@@ -36,5 +36,5 @@ const App = () => {
 export default App
 ```
 
-* Make sure that style of Parent View of ReactNativeReadMore component does NOT include flexDirection:'row' and flexWrap:'wrap'.
-* Keep TextComponent inside useCallback to not render the ReactNativeReadMore component again on rerender of the App when text inside it remains same.
+* Make sure that style of Parent View of ReadMore component does NOT include flexDirection:'row' and flexWrap:'wrap'.
+* You can make TextComponent as complex as you want (as you can see in above example) or as simple as you want (<Text>abcdef</Text>)
