@@ -27,8 +27,8 @@ const App = () => {
       numLinesForReadMore={3}
       ReadMoreComponent={<Text>...read more</Text>}
       ReadLessComponent={<Text>...read less</Text>}
-      isAnimated={true}
-      animationDuration={1000}  // by default, it is 500
+      isAnimated={true}         // by default, it is true
+      animationDuration={1000}  // in milliseconds. By default, it is 500
     />
   )
 }
@@ -37,4 +37,4 @@ export default App
 ```
 
 * Make sure that style of Parent View of ReadMore component does NOT include flexDirection:'row' and flexWrap:'wrap'.
-* You can make TextComponent as complex as you want (as you can see in above example) or as simple as you want (<Text>abcdef</Text>)
+* You can make TextComponent as complex as you want (as you can see in above example) or as simple as you want (```<Text>abcdef</Text>```)
