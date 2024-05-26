@@ -15,7 +15,7 @@ const ReadMoreMain = ({
   shortHeight,
   fullHeight,
   isAnimated = true,
-  animationDuration = 500
+  animationDuration = 300
 }) => {
   const [i, setI] = useState(-1); // i for iteration of target line words
   const [readMoreWidthLeft, setReadMoreWidthLeft] = useState(-1); // readMore Width which is left after subtracting blank space in target line

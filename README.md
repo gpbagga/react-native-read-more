@@ -28,7 +28,7 @@ const App = () => {
       ReadMoreComponent={<Text>...read more</Text>}
       ReadLessComponent={<Text>...read less</Text>}
       isAnimated={true}         // by default, it is true
-      animationDuration={1000}  // in milliseconds. By default, it is 500
+      animationDuration={400}  // in milliseconds. By default, it is 300
     />
   )
 }
