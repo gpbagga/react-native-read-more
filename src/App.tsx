@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import ReadMoreMain from "./helpers/ReadMoreMain";
-
+import isEqual from "./helpers/isEqual";
 type Props = {
   TextComponent: React.ReactElement | React.ComponentType<any>;
   numLinesForReadMore: number;
@@ -9,7 +9,7 @@ type Props = {
   ReadLessComponent: React.ReactElement | React.ComponentType<any>;
   isAnimated?: boolean;
   animationDuration?: number;
-}
+};
 
 function usePrevious(value) {
   const ref = useRef();
@@ -21,90 +21,80 @@ function usePrevious(value) {
 }
 
 const App = (props: Props) => {
-  const [mountMain, setMountMain] = useState(true);
-  const { TextComponent, numLinesForReadMore } = props;
+  // console.log('Read More Rendering')
+  const { TextComponent } = props;
+  let { numLinesForReadMore } = props;
+  if(numLinesForReadMore <= 0){
+    numLinesForReadMore = 1000000
+  }
   const prevTextComponent = usePrevious(TextComponent);
   const orgTextComp = useRef(null);
   const textViewWidthRef = useRef(null);
   const linesRef = useRef(null);
   const [mainStyle, setMainStyle] = useState(null);
-  const [isFinalTextReady, setIsFinalTextReady] = useState(false)
+  const [isFinalTextReady, setIsFinalTextReady] = useState(false);
   const needForReadMoreRef = useRef(null);
-  const shortHeight = useRef(0)
-  const fullHeight = useRef(0)
+  const shortHeight = useRef(0);
+  const fullHeight = useRef(0);
 
-  useEffect(() => {
-    if (!!prevTextComponent && prevTextComponent !== TextComponent) {
-      setMountMain(false);
-      orgTextComp.current = null;
-      textViewWidthRef.current = null;
-      linesRef.current = null;
-      needForReadMoreRef.current = null;
-      setMainStyle(null);
-      setIsFinalTextReady(false)
-      setTimeout(() => {
-        setMountMain(true);
-      });
-    }
-  }, [prevTextComponent, TextComponent]);
+  const isTextComponentChanged = prevTextComponent !== TextComponent;
 
   return (
-    <View
-      style={{ overflow: 'hidden' }}
-    >
-      {!isFinalTextReady ? (
+    <View style={{ overflow: "hidden" }}>
+      {(!isFinalTextReady || needForReadMoreRef.current === false) ? (
         <View
           style={{
             ...(mainStyle ?? {}), // for margin and related styles because margin doesn't work in nested text components
           }}
           onLayout={(e) => {
-            if(e.nativeEvent.layout.height){
-              shortHeight.current = e.nativeEvent.layout.height
+            if (e.nativeEvent.layout.height) {
+              shortHeight.current = e.nativeEvent.layout.height;
             }
           }}
         >
-          <Text
-            numberOfLines={numLinesForReadMore}
-          >
-            {TextComponent}
-          </Text>
+          <Text numberOfLines={numLinesForReadMore}>{TextComponent}</Text>
         </View>
       ) : null}
-      {mountMain ? (
+      <View
+        style={{
+          ...(mainStyle ?? {}), // for margin and related styles because margin doesn't work in nested text components
+        }}
+      >
         <View
-          onLayout={(e) => {
-            if(!needForReadMoreRef.current && e.nativeEvent.layout.height){
-              fullHeight.current = e.nativeEvent.layout.height
-            }
-          }}
           style={{
-            ...(mainStyle ?? {}), // for margin and related styles because margin doesn't work in nested text components
-
-            ...(!isFinalTextReady ? {
-              position:'absolute',
-              opacity: 0,
-              left: 0,
-              right: 0,
-              // width: '100%',  // do not use this
-              top: 0
-            } : {})
+            position: "absolute",
+            opacity: 0,
+            left: 0,
+            right: 0,
+            // width: '100%',  // do not use this
+            top: 0,
+          }}
+          onLayout={(e) => {
+            if (e.nativeEvent.layout.height) {
+              fullHeight.current = e.nativeEvent.layout.height;
+            }
           }}
         >
           {mainStyle && needForReadMoreRef.current === null ? (
             // this text component is to know that do we need read_more text or not
             <Text
-              style={{ position: "relative", opacity: 0, flexGrow: 1, flexShrink: 1 }}
+              style={{
+                position: "relative",
+                opacity: 0,
+                flexGrow: 1,
+                flexShrink: 1,
+              }}
               onLayout={(e) => {
-                if (textViewWidthRef.current) return;
+                // if (textViewWidthRef.current) return;
                 textViewWidthRef.current = e.nativeEvent.layout.width;
-                if (linesRef.current) setMainStyle((old) => ({ ...old }));
+                if (linesRef.current) setMainStyle((old) => ({ ...old })); // just to rerender
               }}
               onTextLayout={(e) => {
-                if (linesRef.current) return;
+                // if (linesRef.current) return;
                 linesRef.current = [...e.nativeEvent.lines];
                 if (linesRef.current.length <= numLinesForReadMore) {
                   needForReadMoreRef.current = false;
-                  setIsFinalTextReady(true)
+                  setIsFinalTextReady(true);
                 } else needForReadMoreRef.current = true;
                 if (textViewWidthRef.current) {
                   setMainStyle((old) => ({ ...old }));
@@ -114,21 +104,30 @@ const App = (props: Props) => {
               {TextComponent}
             </Text>
           ) : null}
-          {(!mainStyle || needForReadMoreRef.current === false) && (
+          {(!mainStyle || isTextComponentChanged) && (
             // this view is to know about the text in Text component and its style
             <View
               onLayout={(e) => {
-                if (orgTextComp.current) return;
                 let temp =
-                  e._dispatchInstances?.child ?? e._dispatchInstances?.alternate;
+                  e._dispatchInstances?.child ??
+                  e._dispatchInstances?.alternate;
                 if (!temp?.memoizedProps?.children) {
                   temp = temp?.child ?? temp?.alternate;
                 }
-                orgTextComp.current = { ...temp };
+                if (
+                  isTextComponentChanged &&
+                  !isEqual(
+                    orgTextComp.current?.memoizedProps,
+                    temp?.memoizedProps
+                  )
+                ) {
+                  needForReadMoreRef.current = null;
+                  setIsFinalTextReady(false);
+                }
                 setMainStyle({
                   ...(orgTextComp.current?.memoizedProps?.style ?? {}),
-                });
-                // }
+                }); // if style is already there then this is just to rerender so that this component is unmounted
+                orgTextComp.current = { ...temp };
               }}
               style={{
                 width: "100%",
@@ -139,23 +138,24 @@ const App = (props: Props) => {
               {TextComponent}
             </View>
           )}
-          {needForReadMoreRef.current && (
-            <ReadMoreMain
-              {...props}
-              mainStyle={mainStyle}
-              orgTextComp={orgTextComp.current}
-              textViewWidth={textViewWidthRef.current}
-              lines={linesRef.current}
-              setIsFinalTextReady={setIsFinalTextReady}
-              shortHeight={shortHeight}
-              fullHeight={fullHeight}
-            />
-          )}
         </View>
-      ) : null}
+        {needForReadMoreRef.current && (
+          <ReadMoreMain
+            {...props}
+            numLinesForReadMore={numLinesForReadMore}
+            mainStyle={mainStyle}
+            orgTextComp={orgTextComp.current}
+            textViewWidth={textViewWidthRef.current}
+            lines={linesRef.current}
+            setIsFinalTextReady={setIsFinalTextReady}
+            shortHeight={shortHeight.current}
+            fullHeight={fullHeight.current}
+          />
+        )}
+      </View>
     </View>
-  )
+  );
 };
 
-const ReadMore =  React.memo(App, (a, b) => a.TextComponent === b.TextComponent);
-export default ReadMore
+const ReadMore = React.memo(App, (a, b) => a.TextComponent === b.TextComponent);
+export default ReadMore;
