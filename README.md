@@ -1,6 +1,7 @@
 # react-native-read-more
 
-* This ReadMore Component renders the full text 2 times and the target line (truncated line) upto 12-14 times to get the layout and do all the required calculations. All these text views which are required for calculations are rendered with opacity zero and position "absolute".
+* This ReadMore Component renders the full text 2 times and the target line (truncated line) upto 12-14 times to get the layout and do all the required calculations. All these text views which are required for calculations are rendered with opacity zero and position "absolute". 
+* When you rerender the parent component without any change in props of this ReadMore component, full text renders again once (with opacity zero and position "absolute") to check whether there is a change in TextComponent.
 
 ```
 import ReadMore from '@gpbagga/react-native-read-more'
