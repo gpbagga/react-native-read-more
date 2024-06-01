@@ -1,6 +1,6 @@
 {
   "name": "@gpbagga/react-native-read-more",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "React Native library which truncates text after a specified number of lines, adding a 'Read More' link. Clicking it expands the text with animation, revealing the full content and a 'Read Less' link to collapse back. Enhance readability effortlessly.",
   "main": "src/App.tsx",
   "scripts": {

@@ -1,7 +1,8 @@
 # react-native-read-more
 
-* This ReadMore Component renders the full text 2 times and the target line (truncated line) upto 12-14 times to get the layout and do all the required calculations. All these text views which are required for calculations are rendered with opacity zero and position "absolute". 
-* When you rerender the parent component without any change in props of this ReadMore component, full text renders again once (with opacity zero and position "absolute") to check whether there is a change in TextComponent.
+* This ReadMore Component initially mounts and unmounts the full text 2 times and the target line (truncated line) upto 12-14 times to perform layout calculations to get desired result. These text views, used for calculations, are rendered with opacity zero and position "absolute", while the visible text remains in front.
+* When you rerender the parent component with unchanged props for the ReadMore component, the full text renders once more (with zero opacity and position "absolute") to verify any changes in the TextComponent unless the TextComponent is memoized.
+* Note that the text component undergoes several mounts and unmounts initially in the background for calculations. Nonetheless, I've experienced no performance issues. Please proceed with caution.
 
 ```
 import ReadMore from '@gpbagga/react-native-read-more'
