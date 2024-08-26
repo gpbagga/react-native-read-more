@@ -92,7 +92,7 @@ const ReadMoreMain = React.memo(
             useNativeDriver: false,
           }).start();
         } else {
-          if (Platform.OS === "android") {  // because in android, Simple animation using Animated is not smoother and useNativeDriver = true does not work with height
+          // if (Platform.OS === "android") {  // because in android, Simple animation using Animated is not smoother and useNativeDriver = true does not work with height
             LayoutAnimation.configureNext({
               duration: animationDuration,
               create: { type: "easeInEaseOut", property: "opacity" },
@@ -105,15 +105,15 @@ const ReadMoreMain = React.memo(
               duration: 0,
               useNativeDriver: false,
             }).start();
-          } else {
-            Animated.timing(heightAnimated, {
-              toValue: shortHeight,
-              duration: animationDuration,
-              useNativeDriver: false,
-            }).start(() => {
-              setIsReadMore(true);
-            });
-          }
+          // } else {
+          //   Animated.timing(heightAnimated, {
+          //     toValue: shortHeight,
+          //     duration: animationDuration,
+          //     useNativeDriver: false,
+          //   }).start(() => {
+          //     setIsReadMore(true);
+          //   });
+          // }
         }
         // const anim = Animated.timing(heightAnimated, {
         //   toValue: isReadMore ? fullHeight + 50 : shortHeight, // 50 is added because read less can get wrapped to next line but fullHeight does not include read less text
